@@ -77,18 +77,14 @@ ip link add name br0.20 link br0 type vlan id 20          # Добавим ин�
 
 
 ## Для отладки
-echo "--- h2 namespace ---"
-ip netns exec h2 ip -4 -br addr show scope global
-ip netns exec h2 ip -4 -br route show scope global
-echo -e "\n"
-echo "--- h3 namespace ---"
-ip netns exec h3 ip -4 -br addr show scope global
-ip netns exec h3 ip -4 -br route show scope global
-echo -e "\n"
-echo "--- h4 namespace ---"
-ip netns exec h4 ip -4 -br addr show scope global
-ip netns exec h4 ip -4 -br route show scope global
-echo -e "\n"
+for i in h2 h3 h4; do
+  echo "--- пространство имен $i ---"
+  echo "Интерфейсы:"
+  ip netns exec $i ip -4 -br addr show scope global
+  echo "Маршруты:"
+  ip netns exec $i ip -4 -br route show scope global
+  echo -e "\n"
+done
 
 # Проверяем, что хост-система (относительно неймспэйсов) имеет доступ к подсетям в нэймспейсах
 ping -c1 -W1 -I br0.10 10.0.0.2 > /dev/null 2>&1 && echo "10.0.0.1 <icmp> 10.0.0.2 - OK" || echo "10.0.0.1 <icmp> 10.0.0.2 - FAIL"
