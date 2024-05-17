@@ -1,13 +1,7 @@
 #!/bin/bash
 
-#
-virsh --connect qemu:///system list
-virsh destroy alpine
-
 # Ставим все необходимое
 apt install --no-install-recommends qemu-system libvirt-clients libvirt-daemon-system virtinst dnsmasq -y
-
-
 
 # Удаляем старый
 rm -rf /etc/dnsmasq.d/dhcp.conf
@@ -32,14 +26,11 @@ echo "log-dhcp"  >> /etc/dnsmasq.d/dhcp.conf
 # Проверяем конфиг и перезапускаем dhcp
 dnsmasq --test && systemctl restart dnsmasq
 
-# Раскоментируме uri_default = "qemu:///system"
-sed -i '/^#uri_default/s/^#//g' /etc/libvirt/libvirt.conf
-
 # Загружаем образ контрольную сумму
-test ! -f /var/lib/libvirt/images/alpine-virt-3.19.1-x86_64.iso && curl https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/x86_64/alpine-virt-3.19.1-x86_64.iso --output /var/lib/libvirt/images/alpine-virt-3.19.1-x86_64.iso
-test ! -f /var/lib/libvirt/images/alpine-virt-3.19.1-x86_64.iso.sha256 && curl https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/x86_64/alpine-virt-3.19.1-x86_64.iso.sha256 --output /var/lib/libvirt/images/alpine-virt-3.19.1-x86_64.iso.sha256
+cd /var/lib/libvirt/images/
+test ! -f ./alpine-virt-3.19.1-x86_64.iso && wget https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/x86_64/alpine-virt-3.19.1-x86_64.iso{.sha256,}
 # чекаем образ
-cd /var/lib/libvirt/images && sha256sum -c /var/lib/libvirt/images/alpine-virt-3.19.1-x86_64.iso.sha256
+sha256sum -c ./alpine-virt-3.19.1-x86_64.iso.sha256
 
 # Дропаем если vm уже крутится
 virsh -q destroy alpine
@@ -54,6 +45,5 @@ virt-install \
 	--network bridge=br1,model=e1000,mac=00:11:22:33:44:55 \
 	--graphics none
 
-# Внутри фдзшту
-echo -e "auto eth0\niface eth0 inet dhcp\n  udhcpc_opts -O search\n" >/etc/network/interfaces && rc-service networking restart
+# Внутри vm
 echo -e "auto lo\niface lo inet loopback\n\nauto eth0\n\niface eth0 inet dhcp\n    hostname alpine" >/etc/network/interfaces && rc-service networking restart

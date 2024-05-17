@@ -6,6 +6,9 @@
 # или же systemd-networkd как общий подход к конфигурации сетевых интерфейсов в
 # дистрибутивах на основе подсистемы инициализации systemd
 
+# Определим интерфейс через который ходим в интернет
+WAN=$(ip route get 8.8.8.8 | awk -- '{printf $5}')
+
 # Дропаем нэймспэйсы и интерфейсы от предыдущих попыток
 ip netns del h2 > /dev/null 2>&1
 ip netns del h3 > /dev/null 2>&1
@@ -18,7 +21,7 @@ ip link del br1 > /dev/null 2>&1
 ip link del dummy0 > /dev/null 2>&1
 
 sysctl -w net.ipv4.ip_forward=1                  # Разрешаем пересылку пакетов
-# iptables -t nat -A POSTROUTING -o $IF -j MASQUERADE     # Тут бы по хорошему, включть маскарадинг на интерфейсе $IF, имеющий доступ к сети интернет, что позволит выходить в нее из подсетей в неймспейсах
+iptables -F -t nat && iptables -t nat -A POSTROUTING -o $WAN -j MASQUERADE # Включаем маскарадинг на интерфейсе имеющий доступ к сети интернет, что позволит выходить в нее из подсетей в неймспейсах
 
 ## h2 ---->
 ip netns add h2                                           # Добавляем нэймспэйс
@@ -105,12 +108,12 @@ echo -e "\n"
 # По идее, нам нужно найти первую, проводную, сетевую карту на шине и уже ее добавить в мост br1,
 # но наверное это оверхэд для задания. По этому создадим dummy интерфейс и примем его за "физический", который указан в настиройках
 # нашей виртуалки и подключен к сети 30.0.0.0/24 гипервизора. (ну и существующую сеть не поламаем (-;)
-ip link add name dummy0 type dummy                         # Имитируем интерфейс ВМ, смотрящий в подсеть 30.0.0.0/24 гипервизора
-ip link set dummy0 up                                      # Поднимаем
+#ip link add name dummy0 type dummy                         # Имитируем интерфейс ВМ, смотрящий в подсеть 30.0.0.0/24 гипервизора
+#ip link set dummy0 up                                      # Поднимаем
 ip link add name br1 type bridge                           # создадим мост
 ip addr add 30.0.0.1/24 brd 30.0.0.255 dev br1		   # Назначим адрес
 ip link set dev br1 up                                     # поднимем его
-ip link set dev dummy0 master br1                          # Добавим в него наш dummy0
+#ip link set dev dummy0 master br1                          # Добавим в него наш dummy0
 
 echo "--- default namespace ---"
 ip -4 -br addr show scope global
