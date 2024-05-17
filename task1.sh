@@ -18,7 +18,7 @@ ip link del veth-h3-out > /dev/null 2>&1
 ip link del veth-h4-out > /dev/null 2>&1
 ip link del br0 > /dev/null 2>&1
 ip link del br1 > /dev/null 2>&1
-ip link del dummy0 > /dev/null 2>&1
+
 
 sysctl -qw net.ipv4.ip_forward=1                  # Разрешаем пересылку пакетов
 apt-get -qqy  install iptables                    # install & flush & wipe
