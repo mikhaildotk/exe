@@ -56,3 +56,4 @@ virt-install \
 
 # Внутри фдзшту
 echo -e "auto eth0\niface eth0 inet dhcp\n  udhcpc_opts -O search\n" >/etc/network/interfaces && rc-service networking restart
+echo -e "auto lo\niface lo inet loopback\n\nauto eth0\n\niface eth0 inet dhcp\n    hostname alpine" >/etc/network/interfaces && rc-service networking restart
