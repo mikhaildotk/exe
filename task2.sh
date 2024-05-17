@@ -44,13 +44,10 @@ virt-install \
 	--vcpus 2 \
 	--os-variant alpinelinux3.17 \
 	--cdrom  /var/lib/libvirt/images/alpine-virt-3.19.1-x86_64.iso \
-	--network bridge=br1,model=virtio,mac=00:11:22:33:44:55,script=no \
+	--network bridge=br1,model=virtio,mac=00:11:22:33:44:55 \
 	--graphics none \
 	--quiet \
-        --noautoconsole 
-
-# Консоль VM
-virsh console alpine
+        --noautoconsole
 
 # Эта команда должна выполнится внутри VM для настройки сети.
 # Наверняка существует способ запустить произвольные команды внутри VM при ее старте (-:
