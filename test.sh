@@ -65,7 +65,6 @@ ip link set dev veth-h2-out up                            # поднимем д�
 ip link set dev veth-h3-out up                            #                     h3
 ip link set dev veth-h4-out up                            #                     h4
 
-
 ### Вешаем адреса на мост
 ip link add name br0.10 link br0 type vlan id 10          # Добавим интерфейс с тэгом 10
   ip addr add 10.0.0.1/24 broadcast 10.0.0.255 dev br0.10 # назначим ipv4 адреc
@@ -74,7 +73,6 @@ ip link add name br0.10 link br0 type vlan id 10          # Добавим ин�
 ip link add name br0.20 link br0 type vlan id 20          # Добавим интерфейс с тэгом 10
   ip addr add 20.0.0.1/24 broadcast 20.0.0.255 dev br0.20 # назначим ipv4 адреc
     ip link set br0.20 up                                 # поднимем его
-
 
 ## Для отладки
 for i in h2 h3 h4; do
@@ -111,3 +109,4 @@ ip link set dev dummy0 master br1                          # Добавим в �
 echo "--- default namespace ---"
 ip -4 -br addr show scope global
 echo -e "\n"
+
