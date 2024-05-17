@@ -17,7 +17,7 @@ ip link del br0 > /dev/null 2>&1
 ip link del br1 > /dev/null 2>&1
 ip link del dummy0 > /dev/null 2>&1
 
-# echo 1 > /proc/sys/net/ipv4/ip_forward                  # Разрешаем пересылку пакетов
+sysctl -w net.ipv4.ip_forward=1                  # Разрешаем пересылку пакетов
 # iptables -t nat -A POSTROUTING -o $IF -j MASQUERADE     # Тут бы по хорошему, включть маскарадинг на интерфейсе $IF, имеющий доступ к сети интернет, что позволит выходить в нее из подсетей в неймспейсах
 
 ## h2 ---->

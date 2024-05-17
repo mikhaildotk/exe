@@ -44,7 +44,6 @@ cd /var/lib/libvirt/images && sha256sum -c /var/lib/libvirt/images/alpine-virt-3
 # Дропаем если vm уже крутится
 virsh -q destroy alpine
 virsh -q undefine alpine
-
 # Стартуем и грузимся
 virt-install \
 	--name alpine \
