@@ -3,10 +3,10 @@
 # Вариант настройки сети напрямую используя набор утилит для управления параметрами сетевых устройств - iproute2
 # не подразумевает сохранение настроек сетевых интерфейсов.
 # На постоянной основе я бы использовал нативный для debian файл конфигурации сетевыйх интерфейсов (/etc/network/interfaces)
-# или же systemd-networkd как общий подход к конфигурации сетевых интерфейсов в 
+# или же systemd-networkd как общий подход к конфигурации сетевых интерфейсов в
 # дистрибутивах на основе подсистемы инициализации systemd
 
-# Дропаем нэймспэйсы и интерфейсы
+# Дропаем нэймспэйсы и интерфейсы от предыдущих попыток
 ip netns del h2 > /dev/null 2>&1
 ip netns del h3 > /dev/null 2>&1
 ip netns del h4 > /dev/null 2>&1
@@ -108,11 +108,10 @@ echo -e "\n"
 ip link add name dummy0 type dummy                         # Имитируем интерфейс ВМ, смотрящий в подсеть 30.0.0.0/24 гипервизора
 ip link set dummy0 up                                      # Поднимаем
 ip link add name br1 type bridge                           # создадим мост
-ip addr add 30.0.0.1/24 brd 30.0.0.255 dev br1		         # Назначим адрес
+ip addr add 30.0.0.1/24 brd 30.0.0.255 dev br1		   # Назначим адрес
 ip link set dev br1 up                                     # поднимем его
 ip link set dev dummy0 master br1                          # Добавим в него наш dummy0
 
 echo "--- default namespace ---"
 ip -4 -br addr show scope global
 echo -e "\n"
-
