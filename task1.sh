@@ -20,8 +20,11 @@ ip link del br0 > /dev/null 2>&1
 ip link del br1 > /dev/null 2>&1
 ip link del dummy0 > /dev/null 2>&1
 
-sysctl -w net.ipv4.ip_forward=1                  # Разрешаем пересылку пакетов
-iptables -F -t nat && iptables -t nat -A POSTROUTING -o $WAN -j MASQUERADE # Включаем маскарадинг на интерфейсе имеющий доступ к сети интернет, что позволит выходить в нее из подсетей в неймспейсах
+sysctl -qw net.ipv4.ip_forward=1                  # Разрешаем пересылку пакетов
+apt-get -qqy  install iptables
+iptables -F -t nat
+iptables -X -t nat
+iptables -t nat -A POSTROUTING -o $WAN -j MASQUERADE # Включаем маскарадинг на интерфейсе имеющий доступ к сети интернет, что позволит выходить в нее из подсетей в неймспейсах
 
 ## h2 ---->
 ip netns add h2                                           # Добавляем нэймспэйс
