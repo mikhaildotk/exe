@@ -2,8 +2,6 @@
 
 # Ставим все необходимое
 apt install --no-install-recommends qemu-system libvirt-clients libvirt-daemon-system virtinst dnsmasq -y
-
-
 # Формируем минималистичный конфиг для dnsmasq
 # Удаляем старый
 rm -rf /etc/dnsmasq.d/dhcp.conf
@@ -51,9 +49,10 @@ virt-install \
 
 # Эта команда должна выполнится внутри VM для настройки сети.
 # Наверняка существует способ запустить произвольные команды внутри VM при ее старте (-:
+echo -e "---------------------------------------------------------------------------"
 echo "Выполнить внутри VM:"
-echo "  echo -e \"auto lo\niface lo inet loopback\n\nauto eth0\n\niface eth0 inet dhcp\n    hostname alpine\" >/etc/network/interfaces && rc-service networking restart"
+echo '    echo -e "auto lo\niface lo inet loopback\n\nauto eth0\n\niface eth0 inet dhcp\n    hostname alpine" >/etc/network/interfaces && rc-service networking restart'
+echo -e "---------------------------------------------------------------------------\n"
 
 # Консоль VM
 virsh console alpine
-
