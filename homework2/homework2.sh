@@ -59,3 +59,9 @@ chown devops_user:devops_group ${MKWORKDIR}/shared_file.txt
 #---#
 # 3 #
 #---#---------------------------------------------
+
+# А вдруг нет?
+which ifconfig || apt install net-tools -y
+
+# 
+clear && ifconfig && setterm --dump --file screen0.dump
