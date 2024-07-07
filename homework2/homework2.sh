@@ -51,7 +51,7 @@ usermod -aG devops_group devops_user
 # install --mode=664 --owner=devops_user --group=devops_group /dev/null ${MKWORKDIR}/shared_file.txt
 
 # Создадим файл и установим права
-touch ${MKWORKDIR}/shared_file.txt chmod 660 ${MKWORKDIR}/shared_file.txt
+touch ${MKWORKDIR}/shared_file.txt && chmod 660 ${MKWORKDIR}/shared_file.txt
 
 # Сменим владельца и группу
 chown devops_user:devops_group ${MKWORKDIR}/shared_file.txt
@@ -63,5 +63,21 @@ chown devops_user:devops_group ${MKWORKDIR}/shared_file.txt
 # А вдруг нет?
 which ifconfig || apt install net-tools -y
 
-# 
-clear && ifconfig && setterm --dump --file screen0.dump
+#
+clear && ifconfig
+
+#
+ifconfig ens18:0 192.168.1.123 netmask 255.255.255.0 up
+
+#
+ping -c4 google.com
+
+#---#
+# 4 #
+#---#---------------------------------------------
+
+#
+echo y|ssh-keygen -t ed25519 -N "" -C "Devops key" -f ${MKWORKDIR}/id_ed25519-devops_homework
+
+#
+ssh-copy-id -i ./id_ed25519-devops_homework root@localhost
