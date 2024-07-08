@@ -77,7 +77,50 @@ ping -c4 google.com
 #---#---------------------------------------------
 
 #
-echo y|ssh-keygen -t ed25519 -N "" -C "Devops key" -f ${MKWORKDIR}/id_ed25519-devops_homework
+echo y|ssh-keygen -t ed25519 -N "" -C "Devops key root@localhost" -f ${MKWORKDIR}/id_ed25519-devops_homework
 
 #
 ssh-copy-id -i ./id_ed25519-devops_homework root@localhost
+
+#
+echo -e "# Override 22 port\nPort 4343\n" > /etc/ssh/sshd_config.d/Port.conf
+echo -e "# Disable pass auth\nPasswordAuthentication no\n" > /etc/ssh/sshd_config.d/PasswordAuthentication.conf
+
+#
+iptables -I INPUT -p tcp --dport 4343 -j ACCEPT
+
+#
+sshd -T | egrep -i '^port 4343|passwordauthentication no' && service ssh restart
+
+#---#
+# 5 #
+#---#---------------------------------------------
+
+#
+cat <<EOF > ${MKWORKDIR}/echodatetime.sh
+#!/bin/bash
+echo $(date '+%H.%M_%d.%m.%Y') | xargs -I timedate echo "touch ${MKWORKDIR}/timedate.txt;echo timedate >> ${MKWORKDIR}/timedate.txt"|sh
+EOF
+chmod +x ${MKWORKDIR}/echodatetime.sh
+
+#
+(crontab -l 2>/dev/null; echo "*/5 * * * * ${MKWORKDIR}/echodatetime.sh") | crontab -
+
+#
+cat <<EOF > ${MKWORKDIR}/echodatetime.service
+[Unit]
+Description=Run echodatetime.sh script
+
+[Service]
+Type=simple
+ExecStart=${MKWORKDIR}/echodatetime.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+#
+systemctl link ${MKWORKDIR}/echodatetime.service
+
+#
+systemctl enable --now echodatetime
