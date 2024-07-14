@@ -1,0 +1,41 @@
+version: "3"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./build/nginx/Dockerfile
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+
+  php:
+    build:
+      context: .
+      dockerfile: ./build/php/Dockerfile
+    ports:
+      - "9000:9000"
+      - "8000:8000"
+    networks:
+      - app-network
+
+  db:
+    image: postgres:15.2-alpine3.17
+    environment:
+#      - LANG=en_US.UTF-8
+#      - POSTGRES_INITDB_ARGS="--locale-provider=icu --icu-locale=en_US.utf8"
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - PGDATA=${DB_PGDATA}
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres/:${DB_PGDATA}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: false
+    name: app-network
