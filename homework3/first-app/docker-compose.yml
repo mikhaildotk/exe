@@ -1,11 +1,13 @@
 version: "3"
 services:
-  web:
+  nginx:
     build:
       context: .
       dockerfile: ./build/nginx/Dockerfile
     ports:
       - "8080:80"
+#    volumes:
+#      - ./app/public/:/var/www/app/public
     networks:
       - app-network
 
