@@ -18,8 +18,8 @@ services:
     build:
       context: .
       dockerfile: ./build/php/Dockerfile
-    volumes:
-      - ./app:/usr/src/app:rw
+#    volumes:
+#      - ./app:/var/www/app/:rw
     networks:
       - app-network
 
