@@ -1,7 +1,6 @@
-version: "3"
 services:
   nginx:
-    image: app-nginx
+    image: profsoft-dev/app-nginx
     container_name: profsoft-web
     build:
       context: .
@@ -9,19 +8,18 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./app/public/:/var/www/app/public
+      - ./app/:/var/www/app/:ro
     networks:
       - app-network
 
   php:
-    image: app-php
+    image: profsoft-dev/app-php
     container_name: profsoft-php
     build:
       context: .
       dockerfile: ./build/php/Dockerfile
-    ports:
-      - "9000:9000"
-      - "8000:8000"
+    volumes:
+      - ./app:/usr/src/app:rw
     networks:
       - app-network
 
@@ -29,8 +27,6 @@ services:
     image: postgres:15.2-alpine3.17
     container_name: profsoft-db
     environment:
-#      - LANG=en_US.UTF-8
-#      - POSTGRES_INITDB_ARGS="--locale-provider=icu --icu-locale=en_US.utf8"
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -38,7 +34,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./postgres/:${DB_PGDATA}
+      - ./postgres:${DB_PGDATA}
     networks:
       - app-network
 
