@@ -1,6 +1,6 @@
 services:
   nginx:
-    image: profsoft-dev/app-nginx:v0.1
+    image: profsoft-dev/app-nginx:${APP_NGINX_TAG}
     container_name: profsoft-web
     build:
       context: .
@@ -13,7 +13,7 @@ services:
       - app-network
 
   php:
-    image: profsoft-dev/app-php:v0.1
+    image: profsoft-dev/app-php:${APP_PHP_TAG}
     container_name: profsoft-php
     build:
       context: .
@@ -25,8 +25,10 @@ services:
       - db-network
 
   db:
-    image: postgres:15.2-alpine3.17
+    image: postgres:${PG_IMAGE_TAG}
     container_name: profsoft-db
+#    labels:
+#        - "homework='3'"
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
