@@ -33,15 +33,14 @@ services:
       - back-tire
 
   db:
-    image: postgres:${PG_IMAGE_TAG}
+    image: postgres:${FROM_POSTGRES_TAG}
     container_name: profsoft-db
     environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - PGDATA=${DB_PGDATA}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - ./postgres:${DB_PGDATA}
+      - ./postgres:${PGDATA}
     networks:
       - back-tire
 
