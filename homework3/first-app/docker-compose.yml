@@ -1,10 +1,13 @@
 services:
   nginx:
-    image: profsoft-dev/app-nginx:${APP_NGINX_TAG}
+    image: ${IMAGE_APP_WEB}:${APP_NGINX_TAG}
     container_name: profsoft-web
     build:
       context: .
       dockerfile: ./build/nginx/Dockerfile
+      args:
+        - SERVERNAME_APP=${SERVERNAME_APP}
+        - FROM_NGINX_TAG=${FROM_NGINX_TAG}
     ports:
       - "8080:80"
     volumes:
@@ -13,11 +16,16 @@ services:
       - app-network
 
   php:
-    image: profsoft-dev/app-php:${APP_PHP_TAG}
+    image: ${IMAGE_APP_PHP}:${APP_PHP_TAG}
     container_name: profsoft-php
     build:
       context: .
       dockerfile: ./build/php/Dockerfile
+      args:
+        - FROM_COMPOSER_TAG=${FROM_COMPOSER_TAG}
+        - FROM_PHP_TAG=${FROM_PHP_TAG}
+#      additional_contexts:
+#        appsrc: https://github.com/Keks3377/first-app.git
 #    volumes:
 #      - ./app:/var/www/app/:rw
     networks:
@@ -27,15 +35,11 @@ services:
   db:
     image: postgres:${PG_IMAGE_TAG}
     container_name: profsoft-db
-#    labels:
-#        - "homework='3'"
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - PGDATA=${DB_PGDATA}
-#    ports:
-#      - 5432:5432
     volumes:
       - ./postgres:${DB_PGDATA}
     networks:
