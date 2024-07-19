@@ -13,7 +13,7 @@ services:
     volumes:
       - ./app/:/var/www/app/:ro
     networks:
-      - app-network
+      - front-tire
 
   php:
     image: ${IMAGE_APP_PHP}:${APP_PHP_TAG}
@@ -29,8 +29,8 @@ services:
 #    volumes:
 #      - ./app:/var/www/app/:rw
     networks:
-      - app-network
-      - db-network
+      - front-tire
+      - back-tire
 
   db:
     image: postgres:${PG_IMAGE_TAG}
@@ -43,12 +43,12 @@ services:
     volumes:
       - ./postgres:${DB_PGDATA}
     networks:
-      - db-network
+      - back-tire
 
 networks:
-  app-network:
+  front-tire:
     external: false
-    name: app-network
-  db-network:
+    name: front-tire
+  back-tire:
     external: false
-    name: db-network
+    name: back-tire
